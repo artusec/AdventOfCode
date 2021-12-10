@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -30,18 +29,15 @@ type bingoData struct {
 }
 
 func main() {
-	bingo := getInput()
-	log.Println("[*] Part 1: ", part1(bingo))
-	log.Println("[*] Part 2: ", part2(bingo))
+	log.Println("[*] Part 1: ", part1(getInput()))
+	log.Println("[*] Part 2: ", part2(getInput()))
 }
 
 func part1(bingo bingoData) int {
 	for _, numOut := range bingo.input {
-		fmt.Println("Ha salido el: ", numOut)
 		for iBoard, board := range bingo.boards {
 			for iLineNum, lineNum := range board.lines {
 				for iPos, pos := range lineNum.numbers {
-					fmt.Println(numOut, pos.data)
 					if pos.data == numOut && !pos.check {
 						bingo.boards[iBoard].lines[iLineNum].numbers[iPos].check = true
 						bingo.boards[iBoard].lines[iLineNum].winRow++
@@ -52,7 +48,6 @@ func part1(bingo bingoData) int {
 						// check win
 						if (bingo.boards[iBoard].lines[iLineNum].winRow == len(lineNum.numbers)) ||
 							bingo.boards[iBoard].lines[iPos].winColumn == len(board.lines) {
-							fmt.Println("Board ganador: ", bingo.boards[iBoard])
 							sum := 0
 							for _, lineWinBoard := range bingo.boards[iBoard].lines {
 								for _, numWinLine := range lineWinBoard.numbers {
@@ -72,8 +67,46 @@ func part1(bingo bingoData) int {
 }
 
 func part2(bingo bingoData) int {
+	var boardsWinner []int
+	var lastWinnerNumber = -1
+	for _, numOut := range bingo.input {
+		for iBoard, board := range bingo.boards {
+			if !contains(boardsWinner, iBoard) {
+				for iLineNum, lineNum := range board.lines {
+					for iPos, pos := range lineNum.numbers {
+						if pos.data == numOut && !pos.check {
+							bingo.boards[iBoard].lines[iLineNum].numbers[iPos].check = true
+							bingo.boards[iBoard].lines[iLineNum].winRow++
+							bingo.boards[iBoard].lines[iPos].winColumn++
+							if (bingo.boards[iBoard].lines[iLineNum].winRow == len(lineNum.numbers)) ||
+								(bingo.boards[iBoard].lines[iPos].winColumn == len(board.lines)) {
+								boardsWinner = append(boardsWinner, iBoard)
+								lastWinnerNumber = numOut
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	sum := 0
+	for _, lineWinBoard := range bingo.boards[boardsWinner[(len(boardsWinner)-1)]].lines {
+		for _, numWinLine := range lineWinBoard.numbers {
+			if !numWinLine.check {
+				sum += numWinLine.data
+			}
+		}
+	}
+	return (sum * lastWinnerNumber)
+}
 
-	return 0
+func contains(array []int, element int) bool {
+	for _, a := range array {
+		if a == element {
+			return true
+		}
+	}
+	return false
 }
 
 func getInput() bingoData {
