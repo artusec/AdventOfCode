@@ -30,7 +30,7 @@ func part1(crabs []int) int {
 		for _, crab := range crabs {
 			sum += abs(crab - position)
 		}
-		if sum <= min {
+		if sum < min {
 			min = sum
 		}
 		sum = 0
@@ -50,7 +50,7 @@ func part2(crabs []int) int {
 
 	min := math.MaxInt64
 	sum := 0
-	for position := 0; position < max; position++ {
+	for position := 0; position <= max; position++ {
 		for _, crab := range crabs {
 			sum += summation(abs(crab - position))
 		}
