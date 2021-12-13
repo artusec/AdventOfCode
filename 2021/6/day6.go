@@ -9,48 +9,29 @@ import (
 )
 
 func main() {
-	log.Println("[*] Part 1: ", part1(getInput()))
-	log.Println("[*] Part 2: ", part2(getInput()))
+	ocean := getInput()
+	log.Println("[*] Part 1: ", lanternfishCount(ocean, 80))
+	log.Println("[*] Part 2: ", lanternfishCount(ocean, 256))
 }
 
-func part1(lanternfish []int) int {
-	news := 0
-	for i := 0; i < 80; i++ {
-		for iFish, fish := range lanternfish {
-			if fish == 0 {
-				news++
-				lanternfish[iFish] = 6
-			} else {
-				lanternfish[iFish]--
-			}
-		}
-		for j := 0; j < news; j++ {
-			lanternfish = append(lanternfish, 8)
-		}
-		news = 0
+func lanternfishCount(ocean []int, days int) int {
+
+	fishes := make([]int, 9)
+	for _, fish := range ocean {
+		fishes[fish]++
 	}
 
-	return len(lanternfish)
-}
-
-func part2(lanternfish []int) int {
-
-	ocean := make([]int, 9)
-	for _, fish := range lanternfish {
-		ocean[fish]++
-	}
-
-	for i := 0; i < 256; i++ {
-		temp := ocean[0]
+	for i := 0; i < days; i++ {
+		temp := fishes[0]
 		for j := 0; j < 8; j++ {
-			ocean[j] = ocean[j+1]
+			fishes[j] = fishes[j+1]
 		}
-		ocean[6] = ocean[6] + temp
-		ocean[8] = temp
+		fishes[6] = fishes[6] + temp
+		fishes[8] = temp
 	}
 
 	sum := 0
-	for _, value := range ocean {
+	for _, value := range fishes {
 		sum = sum + value
 	}
 	return sum
