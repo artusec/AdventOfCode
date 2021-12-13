@@ -76,7 +76,86 @@ func part1(vents []vent) int {
 }
 
 func part2(vents []vent) int {
-	return 0
+	ocean := make(map[string]int)
+	var begin, end, ventType int
+	for _, vent := range vents {
+		if vent.begin.x == vent.end.x {
+			// vertical, y changes
+			if vent.begin.y < vent.end.y {
+				ventType = 5
+				begin = vent.begin.y
+				end = vent.end.y
+			} else {
+				ventType = 6
+				begin = vent.end.y
+				end = vent.begin.y
+			}
+		} else {
+			if vent.begin.y == vent.end.y {
+				// horizontal, x changes
+				if vent.begin.x < vent.end.x {
+					ventType = 7
+					begin = vent.begin.x
+					end = vent.end.x
+				} else {
+					ventType = 8
+					begin = vent.end.x
+					end = vent.begin.x
+				}
+			} else {
+				// diagonal
+				if vent.begin.x < vent.end.x {
+					begin = vent.begin.x
+					end = vent.end.x
+					if vent.begin.y < vent.end.y {
+						ventType = 1
+					} else {
+						ventType = 2
+					}
+				} else {
+					begin = vent.end.x
+					end = vent.begin.x
+					if vent.begin.y < vent.end.y {
+						ventType = 3
+					} else {
+						ventType = 4
+					}
+				}
+			}
+		}
+		for j := begin; j <= end; j++ {
+			ocean[strconv.Itoa(vent.begin.x)+","+strconv.Itoa(vent.begin.y)]++
+			switch ventType {
+			case 1:
+				vent.begin.x++
+				vent.begin.y++
+			case 2:
+				vent.begin.x++
+				vent.begin.y--
+			case 3:
+				vent.begin.x--
+				vent.begin.y++
+			case 4:
+				vent.begin.x--
+				vent.begin.y--
+			case 5:
+				vent.begin.y++
+			case 6:
+				vent.begin.y--
+			case 7:
+				vent.begin.x++
+			case 8:
+				vent.begin.x--
+			}
+		}
+	}
+	sum := 0
+	for _, value := range ocean {
+		if value > 1 {
+			sum++
+		}
+	}
+	return sum
 }
 
 func getInput() []vent {
