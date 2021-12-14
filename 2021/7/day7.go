@@ -26,7 +26,7 @@ func part1(crabs []int) int {
 
 	min := math.MaxInt64
 	sum := 0
-	for position := 0; position < max; position++ {
+	for position := 0; position <= max; position++ {
 		for _, crab := range crabs {
 			sum += abs(crab - position)
 		}
